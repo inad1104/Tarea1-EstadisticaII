@@ -13,19 +13,23 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, echo=FALSE}
  install.packages("ggthemes")
+install.packages("httr")
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
 library(httr)
 library(readr)
 library(ggthemes)
+library(httr)
 ```
 
 
 
 ```{r}
-BaseSalarios <- read_delim("C:/Users/ingri/Downloads/BaseSalarios.csv", 
-    delim = ";", escape_double = FALSE, trim_ws = TRUE)
+#url <- "https://github.com/inad1104/Tarea1-EstadisticaII/blob/df9683b260512959742a705476ac5998f7d8c1a6/BaseSalarios.csv"
+#BaseSalarios <- read_csv(url, show_col_types = FALSE)
+BaseSalarios <- read_csv("C:/Users/ingri/Downloads/BaseSalarios.csv")
+
 ```
 
 ```{r}
@@ -77,7 +81,7 @@ data_cuotas <- data.frame(
 data_mujeres <- BaseSalarios$`U. Salario`[BaseSalarios$Sexo == 'mujer']
 
 # Crear un boxplot con ggplot2
-p1 <- ggplot(data.frame(salario = data_mujeres), aes(x = salario)) +
+p1 <- ggplot(data.frame(salario = data_mujeres), aes( x= salario)) +
   geom_boxplot(fill = "skyblue", color = "darkblue", width = 0.5) +
   theme_minimal() +  # Utilizar un tema minimalista
   labs(title = "Boxplot del Salario para Mujeres",
@@ -100,7 +104,7 @@ p2 <- ggplot(data.frame(salario = data_hombres), aes(x = salario)) +
        x = "Salario",
        y = "") +
   theme_few() + # Utilizar un tema adicional de ggthemes para mejorar la apariencia
-  scale_x_continuous()
+  scale_y_continuous()
 
 # Mostrar el gráfico
 print(p2)
@@ -116,11 +120,11 @@ ggplot(data = BaseSalarios, aes(x = Sexo, y = `U. Salario`)) +
                     width = 0.2) +
        geom_boxplot(fill = "#4271AE", colour = "#1F3552", # Colores
                     alpha = 0.9, outlier.colour = "red") +
-       scale_y_continuous(name = "Salario") +  # Etiqueta de la variable continua
+       scale_y_log10(name = "Salario") +  # Etiqueta de la variable continua
        scale_x_discrete(name = "Sexo") +        # Etiqueta de los grupos
        ggtitle("Boxplot por grupos en ggplot2") +       # Título del plot
        theme(axis.line = element_line(colour = "black", # Personalización del tema
-                                      size = 0.25))
+                                      size = 0.25)) + theme_few()
 
 ```
 ```{r}
