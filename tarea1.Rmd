@@ -29,7 +29,8 @@ library(httr)
 Seguidamente, se cargará la base de datos.
 
 ```{r}
-url <- "https://raw.githubusercontent.com/inad1104/Tarea1-EstadisticaII/df9683b260512959742a705476ac5998f7d8c1a6/BaseSalarios.csv?token=GHSAT0AAAAAACMXYTOC2H3CXFRXINK223XCZNHL2RA"
+#url <- "https://raw.githubusercontent.com/inad1104/Tarea1-EstadisticaII/df9683b260512959742a705476ac5998f7d8c1a6/BaseSalarios.csv?token=GHSAT0AAAAAACMXYTOC2H3CXFRXINK223XCZNHL2RA"
+url<-"https://raw.githubusercontent.com/inad1104/Tarea1-EstadisticaII/main/BaseSalarios.csv?token=GHSAT0AAAAAACM3GTQD5UTLVM6TQYEWJJIIZNIBPPA"
 BaseSalarios <- read_csv(url, show_col_types = FALSE)
 
 ```
@@ -138,37 +139,37 @@ A partir de la ejecución anterior podemos observar que el p-valor es un número
 ```{r}
 #Pregunta #2
 m<-ggplot(BaseSalarios, aes(x = `U. Salario`)) +
-  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "lightblue", alpha = 0.7) +
   labs(title = "Histogram of Your Column", x = "Salarios", y = "Frecuencia")
 
 show(m)
 ```
 
 ```{r}
-D=density(BaseSalarios$`U. Salario`,kernel="rectangular")
+#D=density(BaseSalarios$`U. Salario`,kernel="rectangular")
 
 #hist(BaseSalarios$`U. Salario`, main="DistribucionAsaltos-KernelUniforme", freq=FALSE) lines(D,lwd=2,lty=1,col ="blue")
 
-ggplot(BaseSalarios, aes(x = `U. Salario`)) +
-  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 1.5) + geom_line(D,lwd=2,lty=1,col ="blue") + 
-  labs(title = "Histogram of Your Column", x = "Salarios", y = "Frecuencia")
+#ggplot(BaseSalarios, aes(x = `U. Salario`)) +
+#  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 1.5) + geom_line(D,lwd=2,lty=1,col ="blue") + 
+  #labs(title = "Histogram of Your Column", x = "Salarios", y = "Frecuencia")
 
-ggplot(BaseSalarios, aes(x = `U. Salario`)) + geom_density(D, )
+#ggplot(BaseSalarios, aes(x = `U. Salario`)) + geom_density(D, )
 
-ggplot(data = BaseSalarios, aes(x = `U. Salario`)) +
-  geom_density(fill = "skyblue", color = "black", alpha = 0.7) +
-  ggtitle("Density Plot") +
-  xlab("Values") +
-  ylab("Density")
+#ggplot(data = BaseSalarios, aes(x = `U. Salario`)) +
+#  geom_density(fill = "skyblue", color = "black", alpha = 0.7) +
+##  ggtitle("Density Plot") +
+#  xlab("Values") +
+#  ylab("Density")
 
 d<-ggplot(data = BaseSalarios, aes(x = `U. Salario`)) + 
-  geom_histogram(binwidth = 1, fill = "blue", color = "lightblue", alpha = 0.7) +
+  geom_histogram(aes(y = ..count../sum(..count..)),binwidth = 1, fill = "blue", color = "lightblue", alpha = 0.7) +
   geom_density(bw = "nrd0", kernel='rectangular', color = "black", alpha = 0.7) +
   geom_density(bw = "nrd0", kernel='biweight',  color = "lightblue", alpha = 0.7) +
   geom_density(bw = "nrd0",kernel='gaussian', color = "yellow", alpha = 0.7)+
   geom_density(bw = "nrd0",kernel='epanechnikov', color = "red", alpha = 0.7) +
   geom_density(bw = "nrd0", kernel='triangular', color = "pink", alpha = 0.7) +
-  geom_density(bw = "nrd0", kernel='cosine', color = "lightgreen", alpha = 0.7) 
+  geom_density(bw = "nrd0", kernel='cosine', color = "black", alpha = 0.7) 
 
 show(d)
 
