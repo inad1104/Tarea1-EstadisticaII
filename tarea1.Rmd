@@ -23,15 +23,15 @@ library(httr)
 library(readr)
 library(ggthemes)
 library(httr)
-#library(gridExtra)
+library(univariateML)
+library(rriskDistributions)
+library(tcltk)
 ```
 
 Seguidamente, se cargará la base de datos.
 
 ```{r}
-#url <- "https://raw.githubusercontent.com/inad1104/Tarea1-EstadisticaII/df9683b260512959742a705476ac5998f7d8c1a6/BaseSalarios.csv?token=GHSAT0AAAAAACMXYTOC2H3CXFRXINK223XCZNHL2RA"
-url<-"https://raw.githubusercontent.com/inad1104/Tarea1-EstadisticaII/main/BaseSalarios.csv?token=GHSAT0AAAAAACM3GTQD5UTLVM6TQYEWJJIIZNIBPPA"
-BaseSalarios <- read_csv(url, show_col_types = FALSE)
+BaseSalarios <- read_csv("BaseSalarios.csv",show_col_types = FALSE)
 
 ```
 
@@ -178,17 +178,54 @@ show(d)
 ### Parte III.
 
 #### 1. 
-sfawd
+El criterio de información de Akaike (AIC) hace una comparación entre modelos estadísticos en donde calcula qué tan bien se ajusta el modelo a los datos o conjunto de observaciones y escoge el mejor entre ambos. Este criterio se calcula como $AIC=2\cdot P - 2(log-verosimilitud)$ donde $P$ es la cantidad de parámetros y la log-verosimilitud del modelo, es escoge el modelo cuyo $AIC$ es menor.      
 
 #### 2.
-awdawda
+
+
+```{r}
+prueba <- model_select(BaseSalarios$`U. Salario`, models = univariateML_models, criterion = "aic")
+
+print(prueba)
+
+print(attributes(prueba))
+
+```
+A través de los resultados anteriores, la función aplicada con el criterio AIC mostró que la densidad que mejor se acopla a los datos es una distribución normal estándar.   
+
 
 #### 3.
-awdawd
+
+```{r}
+prueba2 <- fit.cont(BaseSalarios$`U. Salario`)
+
+
+```
+Dados los datos anteriores se puede observar que la distribución que mejor se adapta a los datos dado el criterio AIC es la distribución Weibull ya que es la que presenta el menor AIC.
 
 #### 4.
-awdaw
+Debido a la forma que tienen la distribución normal y la distribución Weibull cuando se grafican, se ha llegado a la conclusión que la función que mejor se adapta a los datos es la distribución de Weibull. 
 
 #### 5.
-awdawda
+Ahora se creará un intervalo de confianza para la media y la desviación estándar.  
+
+```{r}
+bootstrapml(prueba,
+  reps = 1,
+  map = identity,
+  reducer = stats::quantile)
+```
+
+### Parte IV.
+
+#### 1. 
+
+
+#### 2.
+
+
+#### 3.
+##### a.
+##### b.
+
 
