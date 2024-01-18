@@ -14,10 +14,6 @@ knitr::opts_chunk$set(echo = TRUE)
 Se cargan los paquetes necesarios para las funciones que se utilizan en esta tarea.
 
 ```{r}
-echo=FALSE
-#install.packages("ggthemes")
-#install.packages("httr")
-#install.packages("dplyr")
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
@@ -27,6 +23,8 @@ library(ggthemes)
 library(httr)
 library(univariateML)
 library(rriskDistributions)
+library(boot)
+library(gridExtra)
 
 ```
 
@@ -116,7 +114,7 @@ ggplot(data = BaseSalarios, aes(x = Sexo, y = `U. Salario`)) +
                     alpha = 0.9, outlier.colour = "red") +
        scale_y_log10(name = "Salario en miles") +  # Etiqueta de la variable continua
        scale_x_discrete(name = "Sexo") +        # Etiqueta de los grupos
-       ggtitle("Gráfico de barras del salario por sexo") +       # Título del plot
+       ggtitle("Grafico de barras del salario por sexo") +       # Título del plot
        theme(axis.line = element_line(colour = "black", # Personalización del tema
                                       size = 0.25)) + theme_few()
 
@@ -138,32 +136,31 @@ t.test(BaseSalarios$`U. Salario`[BaseSalarios$Sexo == 'mujer'],BaseSalarios$`U. 
 A partir de la ejecución anterior podemos observar que el p-valor es un número muy pequeño por lo que se rechaza la hipótesis nula, por lo que llegamos a la misma conclusión anterior la cual es que los hombres en promedio poseen un salario mayor que las mujeres.
 
 ### Parte II.
-
+#### 1.
 ```{r}
-#Pregunta #2
 m<-ggplot(BaseSalarios, aes(x = `U. Salario`)) +
   geom_histogram(binwidth = 1, fill = "blue", color = "lightblue", alpha = 0.7) +
   labs(title = "Histogram of Your Column", x = "Salarios", y = "Frecuencia")
 
 show(m)
 ```
+#### 2.
 
 ```{r}
-#D=density(BaseSalarios$`U. Salario`,kernel="rectangular")
+g1 <- ggplot(data = BaseSalarios, aes(x = `U. Salario`)) +geom_density(bw = "nrd0", kernel='rectangular', color = "black", alpha = 0.7)
+g2 <- ggplot(data = BaseSalarios, aes(x = `U. Salario`)) +geom_density(bw = "nrd0", kernel='biweight', color = "lightblue", alpha = 0.7)
+g3 <- ggplot(data = BaseSalarios, aes(x = `U. Salario`)) +geom_density(bw = "nrd0", kernel='gaussian', color = "yellow", alpha = 0.7)
+g4 <- ggplot(data = BaseSalarios, aes(x = `U. Salario`)) +geom_density(bw = "nrd0", kernel='epanechnikov', color = "red", alpha = 0.7)
+g5 <- ggplot(data = BaseSalarios, aes(x = `U. Salario`)) +geom_density(bw = "nrd0", kernel='triangular', color = "pink", alpha = 0.7)
+g6 <- ggplot(data = BaseSalarios, aes(x = `U. Salario`)) +geom_density(bw = "nrd0", kernel='cosine', color = "blue", alpha = 0.7)
 
-#hist(BaseSalarios$`U. Salario`, main="DistribucionAsaltos-KernelUniforme", freq=FALSE) lines(D,lwd=2,lty=1,col ="blue")
+grid.arrange(g1,g2,g3,g4,g5,g6, ncol = 3)
+  
+```
 
-#ggplot(BaseSalarios, aes(x = `U. Salario`)) +
-#  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 1.5) + geom_line(D,lwd=2,lty=1,col ="blue") + 
-  #labs(title = "Histogram of Your Column", x = "Salarios", y = "Frecuencia")
 
-#ggplot(BaseSalarios, aes(x = `U. Salario`)) + geom_density(D, )
-
-#ggplot(data = BaseSalarios, aes(x = `U. Salario`)) +
-#  geom_density(fill = "skyblue", color = "black", alpha = 0.7) +
-##  ggtitle("Density Plot") +
-#  xlab("Values") +
-#  ylab("Density")
+#### 3.
+```{r}
 
 d<-ggplot(data = BaseSalarios, aes(x = `U. Salario`)) + 
   geom_histogram(aes(y = ..count../sum(..count..)),binwidth = 1, fill = "blue", color = "lightblue", alpha = 0.7) +
@@ -201,8 +198,6 @@ A través de los resultados anteriores, la función aplicada con el criterio AIC
 
 fit.cont(BaseSalarios$`U. Salario`)
 
-
-
 ```
 
 Dados los datos anteriores se puede observar que la distribución que mejor se adapta a los datos dado el criterio AIC es la distribución Weibull ya que es la que presenta el menor AIC.
@@ -221,21 +216,76 @@ Ahora se creará un intervalo de confianza para la media y la desviación están
 
 ```{r}
 bootstrapml(prueba,
-  reps = 100,
+  reps = 10,
   map = identity,
   reducer = stats::quantile)
 ```
 
-Dado los datos anteriores el intervalo de confianza para la media es de [1075.0125,1064.0848] y para la desviacion estandar es de [613.8814,619.85].
+Dado los datos anteriores el intervalo de confianza para la media es de [1058.345919,1063.81373] y para la desviación estándar es de [614.822349,619.12327].
 
 ### Parte IV.
 
-#### 1.
+#### 1. 
+La función kde es una estimadora de densidad de Kernel, desde 1 hasta 6 dimensiones, recibe como parámetros una matriz de datos, y estima la densidad del Kernel.
+```{r}
+
+set.seed(123)
+BaseSalarios1 <- data.frame(U.Salarios = rnorm(100))
+
+# Calcular el KDE utilizando la función density
+kde_result <- density(BaseSalarios1$U.Salarios)
+
+# Graficar el KDE
+plot(kde_result, main = "Kernel Density Estimation", xlab =  'U. Salario')
+```
+
 
 #### 2.
+La función boot.ci en R es una función utilizada en el contexto del remuestreo bootstrap. 
+
+La función boot.ci se utiliza para calcular intervalos de confianza para estadísticas de interés basadas en los resultados de un procedimiento bootstrap. Esta función se usa en combinación con la función boot, que realiza el remuestreo bootstrap y devuelve una serie de estadísticas obtenidas a partir de los datos remuestreados.
+
+
 
 #### 3.
+```{r}
+# Definir la función para calcular la media con bootstrap
+bootstrap_mean <- function(data, indices) {
+  sample_data <- data[indices,,drop = FALSE]  # Ensure data remains a data frame
+  return(mean(sample_data$`U. Salario`))
+}
 
+# Realizar el bootstrap
+set.seed(123)  # Para reproducibilidad
+boot_result <- boot(data = BaseSalarios, statistic = bootstrap_mean, R = 1000)
+
+```
 ##### a.
+```{r}
 
+# Estimar la media bootstrap (t)
+bootstrap_mean_estimate <- boot_result$t
+
+# Calcular la media de los datos originales (t0)
+original_data_mean <- mean(BaseSalarios$`U. Salario`)
+
+# Mostrar los resultados
+print(paste("Media Bootstrap (t):", mean(bootstrap_mean_estimate)))
+print(paste("Media de los datos originales (t0):", original_data_mean))
+```
+Se puede observar que estas dos medias se acercan bastante, hasta el segundo decimal. 
 ##### b.
+```{r,error = TRUE}
+vector_resultado <- as.vector(boot_result$t)
+
+# Graficar un histograma de los resultados del Bootstrap
+hist(vector_resultado, main = "Histograma de Medias Bootstrap", xlab = "Media Bootstrap", col = "lightblue", border = "blue")
+abline(v = mean(vector_resultado), col = "red", lwd = 2, lty = 2)
+legend("topright", legend = c("Media Bootstrap", "Media Original"),
+       col = c("red", "blue"), lty = c(2, 1), lwd = c(2, 1))
+
+
+
+```
+
+
