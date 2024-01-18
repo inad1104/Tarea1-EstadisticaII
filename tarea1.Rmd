@@ -27,7 +27,7 @@ library(ggthemes)
 library(httr)
 library(univariateML)
 library(rriskDistributions)
-library(tcltk)
+
 ```
 
 Seguidamente, se cargará la base de datos.
@@ -128,13 +128,14 @@ A partir de los datos anteriores, se puede observar que el salario mínimo globa
 
 #### 4.
 
-Ahora vamos a hacer una prueba de hipótesis. Sea $\mu_x$ la media salarial de las mujeres y sea $\mu_y$ la media salarial de los hombres. Se establece la hipótesis nula como: $H_0 = \mu_x > \mu_y$ y su hipótesis alternativa como $H_1 = \mu_x < \mu_y$. Ahora aplicamos la función "t.test" la cual compara dos medias.  
+Ahora vamos a hacer una prueba de hipótesis. Sea $\mu_x$ la media salarial de las mujeres y sea $\mu_y$ la media salarial de los hombres. Se establece la hipótesis nula como: $H_0 = \mu_x > \mu_y$ y su hipótesis alternativa como $H_1 = \mu_x < \mu_y$. Ahora aplicamos la función "t.test" la cual compara dos medias.
 
 ```{r}
 t.test(BaseSalarios$`U. Salario`[BaseSalarios$Sexo == 'mujer'],BaseSalarios$`U. Salario`[BaseSalarios$Sexo == 'hombre'])
 
 ```
-A partir de la ejecución anterior podemos observar que el p-valor es un número muy pequeño por lo que se rechaza la hipótesis nula, por lo que llegamos a la misma conclusión anterior la cual es que los hombres en promedio poseen un salario mayor que las mujeres. 
+
+A partir de la ejecución anterior podemos observar que el p-valor es un número muy pequeño por lo que se rechaza la hipótesis nula, por lo que llegamos a la misma conclusión anterior la cual es que los hombres en promedio poseen un salario mayor que las mujeres.
 
 ### Parte II.
 
@@ -179,11 +180,11 @@ show(d)
 
 ### Parte III.
 
-#### 1. 
-El criterio de información de Akaike (AIC) hace una comparación entre modelos estadísticos en donde calcula qué tan bien se ajusta el modelo a los datos o conjunto de observaciones y escoge el mejor entre ambos. Este criterio se calcula como $AIC=2\cdot P - 2(log-verosimilitud)$ donde $P$ es la cantidad de parámetros y la log-verosimilitud del modelo, es escoge el modelo cuyo $AIC$ es menor.      
+#### 1.
+
+El criterio de información de Akaike (AIC) hace una comparación entre modelos estadísticos en donde calcula qué tan bien se ajusta el modelo a los datos o conjunto de observaciones y escoge el mejor entre ambos. Este criterio se calcula como $AIC=2\cdot P - 2(log-verosimilitud)$ donde $P$ es la cantidad de parámetros y la log-verosimilitud del modelo, es escoge el modelo cuyo $AIC$ es menor.
 
 #### 2.
-
 
 ```{r}
 prueba <- model_select(BaseSalarios$`U. Salario`, models = univariateML_models, criterion = "aic")
@@ -191,47 +192,50 @@ prueba <- model_select(BaseSalarios$`U. Salario`, models = univariateML_models, 
 print(prueba)
 
 ```
-A través de los resultados anteriores, la función aplicada con el criterio AIC mostró que la densidad que mejor se acopla a los datos es una distribución t-Student.    
 
+A través de los resultados anteriores, la función aplicada con el criterio AIC mostró que la densidad que mejor se acopla a los datos es una distribución t-Student.
 
 #### 3.
 
-```{r}
+```{r,error = TRUE}
 
 fit.cont(BaseSalarios$`U. Salario`)
 
 
+
 ```
+
 Dados los datos anteriores se puede observar que la distribución que mejor se adapta a los datos dado el criterio AIC es la distribución Weibull ya que es la que presenta el menor AIC.
 
 #### 4.
 
-
 ```{r}
 AIC(prueba)
 ```
-La distribución t-Student presenta un valor de AIC de 1640063 mientras que la distribución Weibull da un valor de AIC de 1640538.86, por lo tanto, la distribución que mejor se acopla a los datos es la t-Student porque es la que posee un menor AIC.  
+
+La distribución t-Student presenta un valor de AIC de 1640063 mientras que la distribución Weibull da un valor de AIC de 1640538.86, por lo tanto, la distribución que mejor se acopla a los datos es la t-Student porque es la que posee un menor AIC.
 
 #### 5.
-Ahora se creará un intervalo de confianza para la media y la desviación estándar.  
+
+Ahora se creará un intervalo de confianza para la media y la desviación estándar.
 
 ```{r}
 bootstrapml(prueba,
-  reps = 1000,
+  reps = 100,
   map = identity,
   reducer = stats::quantile)
 ```
 
+Dado los datos anteriores el intervalo de confianza para la media es de [1075.0125,1064.0848] y para la desviacion estandar es de [613.8814,619.85].
+
 ### Parte IV.
 
-#### 1. 
-
+#### 1.
 
 #### 2.
 
-
 #### 3.
+
 ##### a.
+
 ##### b.
-
-
