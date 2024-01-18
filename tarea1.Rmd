@@ -2,7 +2,9 @@
 title: "Tarea 1"
 author: "Ingrid Fonseca C03042-Esaú Ramirez C06348"
 date: "2024-01-18"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -188,30 +190,34 @@ prueba <- model_select(BaseSalarios$`U. Salario`, models = univariateML_models, 
 
 print(prueba)
 
-print(attributes(prueba))
-
 ```
-A través de los resultados anteriores, la función aplicada con el criterio AIC mostró que la densidad que mejor se acopla a los datos es una distribución normal estándar.   
+A través de los resultados anteriores, la función aplicada con el criterio AIC mostró que la densidad que mejor se acopla a los datos es una distribución t-Student.    
 
 
 #### 3.
 
 ```{r}
-prueba2 <- fit.cont(BaseSalarios$`U. Salario`)
+
+fit.cont(BaseSalarios$`U. Salario`)
 
 
 ```
 Dados los datos anteriores se puede observar que la distribución que mejor se adapta a los datos dado el criterio AIC es la distribución Weibull ya que es la que presenta el menor AIC.
 
 #### 4.
-Debido a la forma que tienen la distribución normal y la distribución Weibull cuando se grafican, se ha llegado a la conclusión que la función que mejor se adapta a los datos es la distribución de Weibull. 
+
+
+```{r}
+AIC(prueba)
+```
+La distribución t-Student presenta un valor de AIC de 1640063 mientras que la distribución Weibull da un valor de AIC de 1640538.86, por lo tanto, la distribución que mejor se acopla a los datos es la t-Student porque es la que posee un menor AIC.  
 
 #### 5.
 Ahora se creará un intervalo de confianza para la media y la desviación estándar.  
 
 ```{r}
 bootstrapml(prueba,
-  reps = 1,
+  reps = 1000,
   map = identity,
   reducer = stats::quantile)
 ```
